@@ -18,10 +18,11 @@ public class ReportService {
      * レコード全件取得処理
      */
     public List<ReportForm> findAllReport() {
-        List<Report> results = reportRepository.findAll();
+        List<Report> results = reportRepository.findAllByOrderByIdDesc();
         List<ReportForm> reports = setReportForm(results);
         return reports;
     }
+
     /*
      * DBから取得したデータをFormに設定
      */
@@ -37,6 +38,7 @@ public class ReportService {
         }
         return reports;
     }
+
     /*
      * レコード追加
      */
@@ -54,7 +56,21 @@ public class ReportService {
         report.setContent(reqReport.getContent());
         return report;
     }
+    /*
+     * レコード削除
+     */
+    public void deleteReport(Integer id) {
+        reportRepository.deleteById(id);
+    }
 
+    /*
+     * レコード1件取得
+     */
+    public ReportForm editReport(Integer id) {
+        List<Report> results = new ArrayList<>();
+        results.add((Report) reportRepository.findById(id).orElse(null));
+        List<ReportForm> reports = setReportForm(results);
+        return reports.get(0);
+    }
 
 }
-

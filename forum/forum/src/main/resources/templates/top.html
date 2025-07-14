@@ -20,8 +20,31 @@
         <div class="text">
             投稿 : <span th:text="${content.content}"/>
         </div>
+
+        <div class="delete-button">
+            <form th:action="@{/delete/{id}(id=${content.id})}" th:method="delete">
+                <input type="submit" value="削除">
+            </form>
+        </div>
+
+        <div class="edit-button">
+            <a th:href="@{/edit/{id}(id=${content.id})}">
+                <input type="button" value="編集">
+            </a>
+        </div>
+        <!--返信投稿-->
+        <form method="post" action="/commentAdd" th:object="${formModel}">
+            <div class="form-area">
+                <textarea class="comment-box" th:field="*{comment}" size="20" maxlength="200" /></textarea><br/>
+                <input type="submit" value="投稿" />
+            </div>
+        </form>
+
     </div>
+
 </div>
+
+
 </body>
 </html>
 

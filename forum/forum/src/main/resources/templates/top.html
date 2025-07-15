@@ -32,13 +32,37 @@
                 <input type="button" value="編集">
             </a>
         </div>
+
         <!--返信投稿-->
+        <!--methodはpost→返信を登録したいから　actionではcommentAddというurlを指定する
+        objectとして"${formModel}"→ここにコメントへの返信投稿が返ってくる-->
         <form method="post" action="/commentAdd" th:object="${formModel}">
             <div class="form-area">
                 <textarea class="comment-box" th:field="*{comment}" size="20" maxlength="200" /></textarea><br/>
                 <input type="submit" value="投稿" />
             </div>
         </form>
+        <!--投稿へのコメント表示-->
+        <div class="message-icon" th:each="comment : ${comments}">
+            <div><!--commentテーブルのid-->
+                コメントID : <span th:text="${comment.id}"/>
+            </div>
+            <div class="text">
+                コメント : <span th:text="${comment.comment}"/>
+            </div>
+
+            <div class="delete-button">
+                <form th:action="@{/delete/{id}(id=${content.id})}" th:method="delete">
+                    <input type="submit" value="削除">
+                </form>
+            </div>
+
+            <div class="edit-button">
+                <a th:href="@{/edit/{id}(id=${content.id})}">
+                    <input type="button" value="編集">
+                </a>
+            </div>
+
 
     </div>
 

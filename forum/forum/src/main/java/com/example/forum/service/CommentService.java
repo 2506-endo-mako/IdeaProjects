@@ -30,12 +30,14 @@ public class CommentService {
      * DBから取得したコメントデータをFormに設定
      */
     private List<CommentForm> setCommentForm(List<Comment> results) {
+       //空の変数(new)
         List<CommentForm> comments = new ArrayList<>();
-
+        //
         for (int i = 0; i < results.size(); i++) {
             CommentForm comment = new CommentForm();
             Comment result = results.get(i);
-            comment.setCommentId(result.getCommentId());
+            comment.setId(result.getId());
+            comment.setContentId(result.getContentId());
             comment.setComment(result.getComment());
             comments.add(comment);
         }
@@ -53,13 +55,17 @@ public class CommentService {
     /*
      * リクエストから取得したコメント情報をEntityに設定
      */
+    //Comment型のsetCommentEntityメソッドを使う　引数はCommentForm型のreqComment
     private Comment setCommentEntity(CommentForm reqComment) {
+        //Comment型のcomment変数にCommentメソッドを使って空箱を作った（new = 空箱）
         Comment comment = new Comment();
+        //commentという変数にreqCommentに入っているIdをgetしたものをsetIdメソッドを使ってsetしている
         comment.setId(reqComment.getId());
-        comment.setCommentId(reqComment.getCommentId());
+        //commentという変数にreqCommentに入っているContentIdをgetしたものをsetContentIdメソッドを使ってsetしている
+        comment.setContentId(reqComment.getContentId());
         comment.setComment(reqComment.getComment());
-        comment.setCreateDate(reqComment.getCreate());
-        comment.setUpdateDate(reqComment.getComment());
+        comment.setCreateDate(reqComment.getCreateDate());
+        comment.setUpdateDate(reqComment.getUpdateDate());
         return comment;
     }
 }

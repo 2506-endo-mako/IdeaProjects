@@ -25,19 +25,25 @@ public class ForumController {
     @GetMapping
     public ModelAndView top() {
         ModelAndView mav = new ModelAndView();
-        // 投稿を全件取得
+        // 投稿を全件取得　findAllは全件取得　findAll　→　SQL文の「select * from report;」
         List<ReportForm> contentData = reportService.findAllReport();
         // 画面遷移先を指定
         mav.setViewName("/top");
         // 投稿データオブジェクトを保管
         mav.addObject("contents", contentData);
 
-        // コメント返信用に、空のcommentFormを準備
 
+        List<CommentForm> commentData = commentService.findAllComment();
+        // 画面遷移先を指定
+        mav.setViewName("/top");
+        // 投稿データオブジェクトを保管
+        mav.addObject("comments", commentData);
+        // コメント返信用に、空のcommentFormを準備
         mav.addObject("formModel", new CommentForm());
 
         return mav;
     }
+
     /*
      * 新規投稿画面表示
      */

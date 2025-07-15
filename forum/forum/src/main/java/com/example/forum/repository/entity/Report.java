@@ -9,6 +9,8 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "report")
 @Getter
@@ -21,4 +23,11 @@ public class Report {
 
     @Column
     private String content;
+
+    @Column(name = "create_date", insertable = false, updatable = false)
+    private Date createDate;
+
+    @Column(name = "create_date", insertable = false, updatable = false)
+    private Date updateDate;
+
 }

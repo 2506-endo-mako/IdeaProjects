@@ -10,7 +10,7 @@ import java.util.Date;
 public class CommentForm {
 
     private int id;
-    private int commentId;
+    private int contentId;
     private String comment;
     private Date createDate;
     private Date updateDate;

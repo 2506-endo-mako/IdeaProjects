@@ -13,19 +13,20 @@ import java.util.Date;
 public class Comment {
     @Id
     @Column
+    //自動で連番をつける
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int commentId;
+    private int id;
 
     @Column
     private String comment;
 
     //５ついる！
     @Column
-    private int id;
+    private int contentId;
 
-    @Column
+    @Column(name = "create_date", insertable = false, updatable = false)
     private Date createDate;
 
-    @Column
+    @Column(name = "create_date", insertable = false, updatable = false)
     private Date updateDate;
 }

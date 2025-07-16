@@ -68,4 +68,23 @@ public class CommentService {
         comment.setUpdateDate(reqComment.getUpdateDate());
         return comment;
     }
+
+    /*
+     * コメント1件取得
+     */
+    public CommentForm editComment(Integer id) {
+        List<Comment> results = new ArrayList<>();
+        results.add((Comment) commentRepository.findById(id).orElse(null));
+        List<CommentForm> comments = setCommentForm(results);
+        return comments.get(0);
+    }
+
+    /*
+     * 返信コメント削除
+     */
+    public void deleteComment(Integer id) {
+        commentRepository.deleteById(id);
+    }
+
+
 }

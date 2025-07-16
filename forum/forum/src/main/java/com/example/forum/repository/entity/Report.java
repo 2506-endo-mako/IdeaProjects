@@ -21,7 +21,7 @@ public class Report {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column
+    @Column(name = "content", insertable = true, updatable = false)
     private String content;
 
     @Column(name = "create_date", insertable = false, updatable = false)

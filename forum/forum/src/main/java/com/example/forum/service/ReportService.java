@@ -3,9 +3,11 @@ package com.example.forum.service;
 import com.example.forum.controller.form.ReportForm;
 import com.example.forum.repository.ReportRepository;
 import com.example.forum.repository.entity.Report;
+import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,9 +17,26 @@ public class ReportService {
     ReportRepository reportRepository;
 
     /*
-     * レコード全件取得処理
+     * レコード全件取得処理→if文つけてみる
      */
     public List<ReportForm> findAllReport() {
+//        if (!StringUtils.isEmpty(startDate)) {
+//            startDate += " 00:00:00";
+//        } else {
+//            startDate = " 2025/06/01 00:00:00";
+//        }
+//
+//        //もしendDateに値があったらその値 + " 23:59:59"をDaoに渡したい
+//        if (!StringUtils.isEmpty(endDate)) {
+//            endDate += " 23:59:59";
+//        } else {
+//            //変数dateを宣言して、フォーマット変換してる
+//            Date date = new Date();
+//            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+//
+//            //変数endにsdfからfomatメソッドで引数dateを渡したものを代入してる
+//            endDate = sdf.format(date);
+//        }
         List<Report> results = reportRepository.findAllByOrderByIdDesc();
         List<ReportForm> reports = setReportForm(results);
         return reports;
@@ -74,5 +93,4 @@ public class ReportService {
         List<ReportForm> reports = setReportForm(results);
         return reports.get(0);
     }
-
 }

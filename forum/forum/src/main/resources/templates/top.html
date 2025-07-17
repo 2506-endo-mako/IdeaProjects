@@ -10,7 +10,7 @@
     <h1>匿名掲示板</h1>
 </div>
 <div>
-    <form method="get" action="/reportSqueeze" th:object="${formModel}">
+      <form method="get" action="./" th:object="${formModel}">
         <div class="form-area">
             <!--フォームの要素の見出しを表すタグ(label)-->
             日付
@@ -21,7 +21,7 @@
             <!--タグで作成したフォームの中でテキスト入力欄やボタンなどの部品を作成する要素(input)-->
             <input type="submit" value="絞り込み">
         </div>
-    </form>
+      </form>
 </div>
 <div class="main-contents">
     <a href="/new">
@@ -69,12 +69,14 @@
                 </div>
                 <!--削除ボタンの追加-->
                 <div class="delete-button">
+                    <!--actionでとびたいurlを指定　メソッドはdelete-->
                     <form th:action="@{/comment.delete/{id}(id=${comment.id})}" th:method="delete">
                         <input type="submit" value="削除">
                     </form>
                 </div>
                 <!--編集ボタンの追加-->
                 <div class="edit-button">
+                    <!--actionでとびたいurlを指定　メソッドはdelete-->
                     <a th:href="@{/comment.edit/{id}(id=${comment.id})}">
                         <input type="button" value="編集">
                     </a>

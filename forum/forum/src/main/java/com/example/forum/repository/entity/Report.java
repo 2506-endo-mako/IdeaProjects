@@ -1,11 +1,7 @@
 package com.example.forum.repository.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+//import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,13 +17,15 @@ public class Report {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "content", insertable = true, updatable = false)
+    @Column(name = "content", insertable = true, updatable = true)
+   //@NotBlank
     private String content;
 
     @Column(name = "create_date", insertable = false, updatable = false)
+    //@Temporal(TemporalType.TIMESTAMP)
     private Date createDate;
 
-    @Column(name = "create_date", insertable = false, updatable = false)
+    @Column(name = "update_date", insertable = false, updatable = false)
     private Date updateDate;
 
 }

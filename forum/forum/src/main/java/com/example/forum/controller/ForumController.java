@@ -6,6 +6,7 @@ import com.example.forum.service.CommentService;
 import com.example.forum.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -21,13 +22,15 @@ public class ForumController {
     CommentService commentService;
 
     /*
-     * 投稿内容表示処理
+     * 投稿内容表示処理　→　日付の情報も取得したい
      */
     @GetMapping
-    public ModelAndView top() {
+    //@RequestParam（name）型　変数　→　ブラウザからのリクエストの値（パラメータ）を取得することができるアノテーション。
+    public ModelAndView top(@RequestParam(name="start_date", required=false) String startDate
+            ,@RequestParam(name="end_date", required=false) String endDate) {
         ModelAndView mav = new ModelAndView();
         // 投稿を全件取得　findAllは全件取得　findAll　→　SQL文の「select * from report;」
-        List<ReportForm> contentData = reportService.findAllReport();
+        List<ReportForm> contentData = reportService.findAllReport(startDate,endDate);
         // 画面遷移先を指定
         mav.setViewName("/top");
         // 投稿データオブジェクトを保管
@@ -45,10 +48,12 @@ public class ForumController {
         return mav;
     }
 
+
     /*
      * 新規投稿画面表示
      */
     @GetMapping("/new")
+    //@Validated String contentをいれる？
     public ModelAndView newContent() {
         ModelAndView mav = new ModelAndView();
         // form用の空のentityを準備
@@ -57,8 +62,6 @@ public class ForumController {
         mav.setViewName("/new");
         // 準備した空のFormを保管
         mav.addObject("formModel", reportForm);
-        mav.addObject("startDate", reportForm);
-        mav.addObject("endDate", reportForm);
         return mav;
     }
 
@@ -87,11 +90,13 @@ public class ForumController {
     /*
      * コメントの返信削除処理
      */
+    //deleteメソッド→＠deleteに飛んできた
     @DeleteMapping("/comment.delete/{id}")
+    //@PathVariable Integer id　でURLパス内の変数をメソッドの引数にマッピングするためのアノテーション
     public ModelAndView DeleteComment(@PathVariable Integer id) {
-        // 投稿をテーブルに格納
+        // コメント返信のidをServiceに送る
         commentService.deleteComment(id);
-        // rootへリダイレクト
+        // top画面？？？へリダイレクト
         return new ModelAndView("redirect:/");
     }
 
@@ -145,10 +150,13 @@ public class ForumController {
      * コメント返信の編集処理
      */
     @PutMapping("/commentUpdate/{id}")
+    //@PathVariable Integer id　でURLパス内の変数をメソッドの引数にマッピングするためのアノテーション
+    //@ModelAttribute　リクエストパラメータをオブジェクトにマッピングし、ビューに渡すためのアノテーション
+    //　→　上記のアノテーションは、自動的に、送られてきたCommentForm型のデータを箱に格納し、ビューに渡す機能まで兼ね備えている
     public ModelAndView commentUpdateContent (@PathVariable Integer id, @ModelAttribute("formModel") CommentForm comment) {
         // UrlParameterのidを更新するentityにセット
         comment.setId(id);
-        // 編集した投稿を更新
+        // 編集したコメント返信を更新（save）
         commentService.saveComment(comment);
         // rootへリダイレクト
         return new ModelAndView("redirect:/");

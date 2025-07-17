@@ -45,9 +45,10 @@ public class CommentService {
     }
 
     /*
-     * コメント追加
+     * コメント返信追加
      */
     public void saveComment(CommentForm reqComment) {
+        //Etityにsetしている
         Comment saveComment = setCommentEntity(reqComment);
         commentRepository.save(saveComment);
     }
@@ -83,6 +84,7 @@ public class CommentService {
      * 返信コメント削除
      */
     public void deleteComment(Integer id) {
+        //deleteById　→　指定されたidを持つエンティティをデータベースから削除できる
         commentRepository.deleteById(id);
     }
 

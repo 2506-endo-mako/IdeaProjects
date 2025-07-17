@@ -6,9 +6,13 @@ import com.example.forum.repository.entity.Report;
 import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -17,27 +21,37 @@ public class ReportService {
     ReportRepository reportRepository;
 
     /*
-     * レコード全件取得処理→if文つけてみる
+     * レコード全件取得処理　→　条件分岐をつけたい　→　条件で絞り込んだ情報をDBから取りたい
      */
-    public List<ReportForm> findAllReport() {
-//        if (!StringUtils.isEmpty(startDate)) {
-//            startDate += " 00:00:00";
-//        } else {
-//            startDate = " 2025/06/01 00:00:00";
-//        }
-//
-//        //もしendDateに値があったらその値 + " 23:59:59"をDaoに渡したい
-//        if (!StringUtils.isEmpty(endDate)) {
-//            endDate += " 23:59:59";
-//        } else {
-//            //変数dateを宣言して、フォーマット変換してる
-//            Date date = new Date();
-//            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-//
-//            //変数endにsdfからfomatメソッドで引数dateを渡したものを代入してる
-//            endDate = sdf.format(date);
-//        }
-        List<Report> results = reportRepository.findAllByOrderByIdDesc();
+    public List<ReportForm> findAllReport(String startDate, String endDate) {
+        if (!StringUtils.isEmpty(startDate)) {
+            startDate += " 00:00:00.000";
+        } else {
+            startDate = "2025-06-01 00:00:00.000";
+        }
+        //もしendDateに値があったらその値 + " 23:59:59"をDaoに渡したい
+        if (!StringUtils.isEmpty(endDate)) {
+            endDate += " 23:59:59.999";
+        } else {
+            //変数dateを宣言して、フォーマット変換してる
+            Date date = new Date();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+
+            //変数endにsdfからfomatメソッドで引数dateを渡したものを代入してる
+            endDate = sdf.format(date);
+        }
+        //例外を処理する必要がある
+        Date start = null;
+        Date end = null;
+        try {
+            SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+            start = sdFormat.parse(startDate);
+            end = sdFormat.parse(endDate);
+        } catch(ParseException e){
+            e.printStackTrace();
+            return null;
+        }
+        List<Report> results = reportRepository.findByUpdateDateBetweenOrderByUpdateDateDesc(start, end);
         List<ReportForm> reports = setReportForm(results);
         return reports;
     }
@@ -53,6 +67,8 @@ public class ReportService {
             Report result = results.get(i);
             report.setId(result.getId());
             report.setContent(result.getContent());
+            report.setCreateDate(result.getCreateDate());
+            report.setUpdateDate(result.getUpdateDate());
             reports.add(report);
         }
         return reports;
@@ -73,8 +89,8 @@ public class ReportService {
         Report report = new Report();
         report.setId(reqReport.getId());
         report.setContent(reqReport.getContent());
-        report.setCreateDate(reqReport.getCreateDate());
-        report.setUpdateDate(reqReport.getUpdateDate());
+        //report.setCreateDate(reqReport.getCreateDate());
+        //report.setUpdateDate(reqReport.getUpdateDate());
         return report;
     }
     /*

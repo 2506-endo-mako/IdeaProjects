@@ -9,6 +9,10 @@
 <body>
 <div class="header-contents">
     <h2>編集</h2>
+    <!--下記のようにclassで宣言したものと、cssが繋がっている-->
+    <div class="errorMessages">
+        <span th:text="${message}" />
+    </div>
 </div>
 <div class="main-contents">
     <form th:action="@{/update/{id}(id=${formModel.id})}" th:object="${formModel}" th:method="put">

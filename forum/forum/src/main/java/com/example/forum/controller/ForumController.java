@@ -4,8 +4,12 @@ import com.example.forum.controller.form.CommentForm;
 import com.example.forum.controller.form.ReportForm;
 import com.example.forum.service.CommentService;
 import com.example.forum.service.ReportService;
+import io.micrometer.common.util.StringUtils;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -20,7 +24,8 @@ public class ForumController {
     //使いまわしできる
     @Autowired
     CommentService commentService;
-
+    @Autowired
+    HttpSession session;
     /*
      * 投稿内容表示処理　→　日付の情報も取得したい
      */
@@ -35,6 +40,12 @@ public class ForumController {
         mav.setViewName("/top");
         // 投稿データオブジェクトを保管
         mav.addObject("contents", contentData);
+
+        //条件分岐でエラーメッセージが空じゃなければエラーメッセージをセットする
+        if {
+
+        }
+
 
         //コメント返信内容表示処理
         List<CommentForm> commentData = commentService.findAllComment();
@@ -55,6 +66,9 @@ public class ForumController {
     @GetMapping("/new")
     //@Validated String contentをいれる？
     public ModelAndView newContent() {
+
+        //エラー処理　→if文？
+
         ModelAndView mav = new ModelAndView();
         // form用の空のentityを準備
         ReportForm reportForm = new ReportForm();
@@ -69,7 +83,24 @@ public class ForumController {
      * 新規投稿処理
      */
     @PostMapping("/add")
-    public ModelAndView addContent(@ModelAttribute("formModel") ReportForm reportForm){
+    public ModelAndView addContent(@Validated @ModelAttribute("formModel")
+                                       ReportForm reportForm , BindingResult result){
+        if (result.hasErrors()) {
+            // バリデーションエラー時の処理
+            String message = null;
+            for (FieldError error : result.getFieldErrors()) {
+                //String field = error.getField();
+                message = error.getDefaultMessage();
+            }
+            //エラーメッセージをnew.htmlに持っていきたい
+            ModelAndView mav = new ModelAndView();
+            // 画面遷移先を指定
+            mav.setViewName("/new");
+            // 投稿データオブジェクトを保管
+            mav.addObject("message", message);
+            return mav;
+        }
+
         // 投稿をテーブルに格納
         reportService.saveReport(reportForm);
         // rootへリダイレクト
@@ -137,7 +168,24 @@ public class ForumController {
      * 編集処理
      */
     @PutMapping("/update/{id}")
-    public ModelAndView updateContent (@PathVariable Integer id, @ModelAttribute("formModel") ReportForm report) {
+    //@ValidatedはReportForm型のreportにつけたい→「,」の後に持ってくる
+    public ModelAndView updateContent (@PathVariable Integer id,
+                                       @Validated @ModelAttribute("formModel") ReportForm report, BindingResult result) {
+        if (result.hasErrors()) {
+            // バリデーションエラー時の処理
+            String message = null;
+            for (FieldError error : result.getFieldErrors()) {
+                //String field = error.getField();
+                message = error.getDefaultMessage();
+            }
+            //エラーメッセージをnew.htmlに持っていきたい
+            ModelAndView mav = new ModelAndView();
+            // 画面遷移先を指定
+            mav.setViewName("/edit");
+            // 投稿データオブジェクトを保管
+            mav.addObject("message", message);
+            return mav;
+        }
         // UrlParameterのidを更新するentityにセット
         report.setId(id);
         // 編集した投稿を更新
@@ -164,11 +212,35 @@ public class ForumController {
 
 
 
+
     /*
      * コメントの返信投稿
      */
     @PostMapping("/commentAdd")
-    public ModelAndView addComment(@ModelAttribute("formModel") CommentForm commentForm){
+    public ModelAndView addComment(@Validated @ModelAttribute("formModel") CommentForm commentForm, BindingResult result) {
+
+
+        if (result.hasErrors()) {
+            // バリデーションエラー時の処理
+            //変数messageをnullする
+            String message = null;
+            //繰り返しの拡張for文（i=とかいらない）でresultにエラーメッセージが入っていたら
+            // 変数errorに格納する
+            for (FieldError error : result.getFieldErrors()) {
+                //String field = error.getField();
+                //errorからdefaultMessageをgetして変数messageに詰める
+                message = error.getDefaultMessage();
+            }
+            //エラーメッセージをnew.htmlに持っていきたい
+            ModelAndView mav = new ModelAndView();
+            // 画面遷移先を指定
+            mav.setViewName("redirect:/");
+            // 投稿データオブジェクトを保管
+            session.setAttribute("message", message);
+            return mav;
+        }
+
+
         // 投稿をテーブルに格納
         commentService.saveComment(commentForm);
         // rootへリダイレクト

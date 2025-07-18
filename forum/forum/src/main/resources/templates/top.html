@@ -34,7 +34,11 @@
         <div class="text">
             投稿 : <span th:text="${content.content}"/>
         </div>
-
+        <div class="date">
+            <!--<span th:text="${content.createDate}"/>-->
+            日付 : <span th:text="${content.createDate}"/>
+            <!--<th:formatDate value="${content.createDate}" pattern="yyyy-MM-dd HH:mm:ss" />-->
+        </div>
         <div class="delete-button">
             <form th:action="@{/delete/{id}(id=${content.id})}" th:method="delete">
                 <input type="submit" value="削除">
@@ -53,6 +57,9 @@
         <form method="post" action="/commentAdd" th:object="${formModel}">
             <div class="form-area">
                 <textarea class="comment-box" th:field="*{comment}" size="20" maxlength="200" /></textarea><br/>
+                <div class="errorMessages">
+                    <span th:text="${message}" />
+                </div>
                 <input type="hidden" name="contentId" th:value="${content.id}" />
                 <input type="submit" value="返信" />
             </div>

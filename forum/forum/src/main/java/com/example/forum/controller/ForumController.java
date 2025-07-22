@@ -41,10 +41,9 @@ public class ForumController {
         // 投稿データオブジェクトを保管
         mav.addObject("contents", contentData);
 
-        //if(session.getAttribute("reportId") != null) {
-            Integer reportId2 = (Integer) session.getAttribute("reportId");
-            mav.addObject("reportId", reportId2);
-        //}
+        Integer reportId2 = (Integer) session.getAttribute("reportId");
+        mav.addObject("reportId", reportId2);
+
 
         //★ModelAndView型に入れるためにString型に入れた？？？
         //Object型のsessionをString型に型変換してString型の変数message2に入れる
@@ -95,7 +94,6 @@ public class ForumController {
             // バリデーションエラー時の処理
             String message = null;
             for (FieldError error : result.getFieldErrors()) {
-                //String field = error.getField();
                 message = error.getDefaultMessage();
             }
             //エラーメッセージをnew.htmlに持っていきたい
@@ -250,7 +248,6 @@ public class ForumController {
             //繰り返しの拡張for文（i=とかいらない）でresultにエラーメッセージが入っていたら
             // 変数errorに格納する
             for (FieldError error : result.getFieldErrors()) {
-                //String field = error.getField();
                 //errorからdefaultMessageをgetして変数messageに詰める
                 message = error.getDefaultMessage();
             }

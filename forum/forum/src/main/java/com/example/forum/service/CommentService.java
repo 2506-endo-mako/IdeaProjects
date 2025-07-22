@@ -48,7 +48,7 @@ public class CommentService {
      * コメント返信追加
      */
     public void saveComment(CommentForm reqComment) {
-        //Etityにsetしている
+        //Entityにsetしている
         Comment saveComment = setCommentEntity(reqComment);
         commentRepository.save(saveComment);
     }

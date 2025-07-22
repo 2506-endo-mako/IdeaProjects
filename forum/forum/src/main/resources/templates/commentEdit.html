@@ -8,12 +8,16 @@
 <body>
 <div class="header-contents">
     <h2>編集</h2>
+    <div class="errorMessages">
+        <div><span th:text="${message}"/></div>
+    </div>
 </div>
-<div class="main-contents">
+<div class="main-contents"></div> <!--th:each="comment : ${comment}"-->
     <form th:action="@{/commentUpdate/{id}(id=${formModel.id})}" th:object="${formModel}" th:method="put">
         <div class="form-area">
             <label>返信コメント内容</label>
             <textarea class="tweet-box" name="comment" th:field="*{comment}" size="20" maxlength="200" /></textarea><br/>
+            <!--<input type="hidden" name="contentId" th:value="${comment.contentId}"/>-->
             <input type="submit" value="更新"/>
         </div>
     </form>

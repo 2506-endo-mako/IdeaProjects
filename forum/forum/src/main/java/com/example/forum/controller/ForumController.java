@@ -41,11 +41,17 @@ public class ForumController {
         // 投稿データオブジェクトを保管
         mav.addObject("contents", contentData);
 
-        //条件分岐でエラーメッセージが空じゃなければエラーメッセージをセットする
-        if {
+        //if(session.getAttribute("reportId") != null) {
+            Integer reportId2 = (Integer) session.getAttribute("reportId");
+            mav.addObject("reportId", reportId2);
+        //}
 
-        }
-
+        //★ModelAndView型に入れるためにString型に入れた？？？
+        //Object型のsessionをString型に型変換してString型の変数message2に入れる
+        String message2 = (String)session.getAttribute("message");
+        //ModelAndView型のmavにaddする（message2を"message"に入れている）
+        mav.addObject("message", message2);
+        session.invalidate();
 
         //コメント返信内容表示処理
         List<CommentForm> commentData = commentService.findAllComment();
@@ -150,7 +156,7 @@ public class ForumController {
     /*
      * コメント返信の編集画面表示処理
      */
-    @GetMapping("/comment.edit/{id}")
+    @GetMapping("/commentEdit/{id}")
     public ModelAndView commentEditContent(@PathVariable Integer id) {
         ModelAndView mav = new ModelAndView();
         // 編集する投稿を取得
@@ -158,7 +164,7 @@ public class ForumController {
         // 編集する投稿をセット
         mav.addObject("formModel", comment);
         // 画面遷移先を指定
-        mav.setViewName("/comment.edit");
+        mav.setViewName("/commentEdit");
         return mav;
     }
 
@@ -201,7 +207,24 @@ public class ForumController {
     //@PathVariable Integer id　でURLパス内の変数をメソッドの引数にマッピングするためのアノテーション
     //@ModelAttribute　リクエストパラメータをオブジェクトにマッピングし、ビューに渡すためのアノテーション
     //　→　上記のアノテーションは、自動的に、送られてきたCommentForm型のデータを箱に格納し、ビューに渡す機能まで兼ね備えている
-    public ModelAndView commentUpdateContent (@PathVariable Integer id, @ModelAttribute("formModel") CommentForm comment) {
+    public ModelAndView commentUpdateContent (@PathVariable Integer id,
+                                              @Validated @ModelAttribute("formModel") CommentForm comment, BindingResult result) {
+        if (result.hasErrors()) {
+            // バリデーションエラー時の処理
+            String message = null;
+            for (FieldError error : result.getFieldErrors()) {
+                //String field = error.getField();
+                message = error.getDefaultMessage();
+            }
+            //エラーメッセージをnew.htmlに持っていきたい
+            ModelAndView mav = new ModelAndView();
+            // 画面遷移先を指定
+            mav.setViewName("/commentEdit");
+            // 投稿データオブジェクトを保管
+            mav.addObject("message", message);
+            return mav;
+        }
+
         // UrlParameterのidを更新するentityにセット
         comment.setId(id);
         // 編集したコメント返信を更新（save）
@@ -236,7 +259,15 @@ public class ForumController {
             // 画面遷移先を指定
             mav.setViewName("redirect:/");
             // 投稿データオブジェクトを保管
+
+            //commentFormからcontentIdを取得する
+            int reportId;
+            reportId = commentForm.getContentId();
+
+            //sessionに"reportId"として詰める
+            session.setAttribute("reportId", reportId);
             session.setAttribute("message", message);
+
             return mav;
         }
 

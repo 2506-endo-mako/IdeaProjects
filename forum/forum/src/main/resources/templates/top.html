@@ -6,93 +6,95 @@
     <title>TOP</title>
 </head>
 <body>
-<div class="header-contents">
-    <h1>匿名掲示板</h1>
-</div>
-<div>
-      <form method="get" action="./" th:object="${formModel}">
-        <div class="form-area">
-            <!--フォームの要素の見出しを表すタグ(label)-->
-            日付
-            <!-- nameがServletに渡したい情報　valueが初期表示させたい情報 -->
-            <input type="date" id="start-date" name="start_date" value="${startDate}">
-            ～
-            <input type="date" id="end-date" name="end_date" value="${endDate}">
-            <!--タグで作成したフォームの中でテキスト入力欄やボタンなどの部品を作成する要素(input)-->
-            <input type="submit" value="絞り込み">
-        </div>
-      </form>
-</div>
-<div class="main-contents">
-    <a href="/new">
-        <button class="new-button" type="button">新規投稿</button>
-    </a>
-    <div class="message-icon" th:each="content : ${contents}">
-        <div>
-            ID : <span th:text="${content.id}"/>
-        </div>
-        <div class="text">
-            投稿 : <span th:text="${content.content}"/>
-        </div>
-        <div class="date">
-            <!--<span th:text="${content.createDate}"/>-->
-            日付 : <span th:text="${content.createDate}"/>
-            <!--<th:formatDate value="${content.createDate}" pattern="yyyy-MM-dd HH:mm:ss" />-->
-        </div>
-        <div class="delete-button">
-            <form th:action="@{/delete/{id}(id=${content.id})}" th:method="delete">
-                <input type="submit" value="削除">
-            </form>
-        </div>
-
-        <div class="edit-button">
-            <a th:href="@{/edit/{id}(id=${content.id})}">
-                <input type="button" value="編集">
-            </a>
-        </div>
-
-        <!--返信投稿-->
-        <!--methodはpost→返信を登録したいから　actionではcommentAddというurlを指定する
-        objectとして"${formModel}"→ここにコメントへの返信投稿が返ってくる-->
-        <form method="post" action="/commentAdd" th:object="${formModel}">
+    <div class="header-contents">
+        <h1>匿名掲示板</h1>
+    </div>
+    <div>
+        <form method="get" action="./" th:object="${formModel}">
             <div class="form-area">
-                <textarea class="comment-box" th:field="*{comment}" size="20" maxlength="200" /></textarea><br/>
-                <div class="errorMessages">
-                    <span th:text="${message}" />
-                </div>
-                <input type="hidden" name="contentId" th:value="${content.id}" />
-                <input type="submit" value="返信" />
+                <!--フォームの要素の見出しを表すタグ(label)-->
+                日付
+                <!-- nameがServletに渡したい情報　valueが初期表示させたい情報 -->
+                <input type="date" id="start-date" name="start_date" value="${startDate}">
+                ～
+                <input type="date" id="end-date" name="end_date" value="${endDate}">
+                <!--タグで作成したフォームの中でテキスト入力欄やボタンなどの部品を作成する要素(input)-->
+                <input type="submit" value="絞り込み">
             </div>
         </form>
-        <!--投稿へのコメント表示-->
+    </div>
+    <div class="main-contents">
+        <a href="/new">
+            <button class="new-button" type="button">新規投稿</button>
+        </a>
+        <div class="message-icon" th:each="content : ${contents}">
+            <div>
+                ID : <span th:text="${content.id}"/>
+            </div>
+            <div class="text">
+                投稿 : <span th:text="${content.content}"/>
+            </div>
+            <div class="date">
+                日付 : <span th:text="${content.createDate}"/>
+            </div>
+            <div class="delete-button">
+                <form th:action="@{/delete/{id}(id=${content.id})}" th:method="delete">
+                    <input type="submit" value="削除">
+                </form>
+            </div>
+            <div class="edit-button">
+                <a th:href="@{/edit/{id}(id=${content.id})}">
+                    <input type="button" value="編集">
+                </a>
+            </div>
+            <!--コメントへの返信投稿-->
+            <!--methodはpost→返信を登録したいから　actionではcommentAddというurlを指定する
+            objectとして"${formModel}"→ここにコメントへの返信投稿が返ってくる-->
 
+            <form method="post" action="/commentAdd" th:object="${formModel}">
+                <div class="form-area">
+                    <!--どこかにこれ入れる　→　session.invalidate();-->
+                    <!--each=messageにはControllerから持ってきた${message}を格納してそのあと使っている-->
+                    <textarea class="comment-box" th:field="*{comment}" size="20" maxlength="200"/></textarea><br/>
+                    <div class="errorMessages">
+                        <div th:if ="${content.id == reportId}">
+                            <div><span th:text="${message}"/></div>
+                        </div>
+                    </div>
+                    <!--hidden属性で-->
+                    <input type="hidden" name="contentId" th:value="${content.id}"/>
+                    <input type="submit" value="返信"/>
+                </div>
+            </form>
+            <!--投稿へのコメント表示-->
             <div class="message-icon" th:each="comment : ${comments}">
                 <div th:if="${content.id == comment.contentId}">
-                <div><!--commentテーブルのid-->
-                    コメントID : <span th:text="${comment.id}"/>
-                </div>
-                <div class="text">
-                    コメント : <span th:text="${comment.comment}"/>
-                </div>
-                <!--削除ボタンの追加-->
-                <div class="delete-button">
-                    <!--actionでとびたいurlを指定　メソッドはdelete-->
-                    <form th:action="@{/comment.delete/{id}(id=${comment.id})}" th:method="delete">
-                        <input type="submit" value="削除">
-                    </form>
-                </div>
-                <!--編集ボタンの追加-->
-                <div class="edit-button">
-                    <!--actionでとびたいurlを指定　メソッドはdelete-->
-                    <a th:href="@{/comment.edit/{id}(id=${comment.id})}">
-                        <input type="button" value="編集">
-                    </a>
+                    <div>
+                        <!--74行目でcommentsを格納したcommentからidを取る-->
+                        コメントID : <span th:text="${comment.id}"/>
+                    </div>
+                    <div class="text">
+                        コメント : <span th:text="${comment.comment}"/>
+                    </div>
+                    <!--削除ボタンの追加-->
+                    <div class="delete-button">
+                        <!--actionでとびたいurlを指定　メソッドはdelete-->
+                        <form th:action="@{/comment.delete/{id}(id=${comment.id})}" th:method="delete">
+                            <input type="submit" value="削除">
+                        </form>
+                    </div>
+                    <!--編集ボタンの追加-->
+                    <div class="edit-button">
+                        <!--actionでとびたいurlを指定　メソッドはdelete-->
+                        <a th:href="@{/commentEdit/{id}(id=${comment.id})}">
+                            <input type="button" value="編集">
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-</div>
+    </div>
 </body>
 </html>
 
